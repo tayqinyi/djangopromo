@@ -20,5 +20,5 @@ from . import views
 app_name = "voucher"
 
 urlpatterns = [
-    path('', views.home_view, name="voucher"),
+    path('', views.VoucherView.as_view(), name="home"),
 ]

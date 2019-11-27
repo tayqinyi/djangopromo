@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from model_utils.managers import InheritanceManager
+
 from core.models import Currency
 
 
@@ -10,6 +12,8 @@ class BaseVoucher(models.Model):
     code = models.CharField(unique=True, max_length=8, blank=False, null=False);
     amount = models.DecimalField(default=10, max_digits=10, decimal_places=2, blank=False, null=False)
     uses = models.IntegerField(default=3, validators=[MinValueValidator(1)])
+
+    objects = InheritanceManager()
 
     def __str__(self):
         return self.code
@@ -21,7 +25,10 @@ class BaseVoucher(models.Model):
             raise ValidationError({'amount': 'Amount should be larger than 0.'})
 
     def get_absolute_url(self):
-        return reverse('voucher')
+        return reverse('voucher:home')
+
+    def get_discount_display(self):
+        return str(self.amount) + '%'
 
 class FixedVoucher(BaseVoucher):
 
@@ -31,6 +38,8 @@ class FixedVoucher(BaseVoucher):
 
     currency = models.OneToOneField(Currency, on_delete=models.DO_NOTHING)
 
+    def get_discount_display(self):
+        return self.currency.symbol + str(self.amount)
 
 class PercentVoucher(BaseVoucher):
 
