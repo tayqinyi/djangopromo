@@ -36,7 +36,7 @@ class FixedVoucher(BaseVoucher):
         verbose_name = 'fixed voucher'
         verbose_name_plural = 'fixed vouchers'
 
-    currency = models.OneToOneField(Currency, on_delete=models.DO_NOTHING)
+    currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
 
     def get_discount_display(self):
         return self.currency.symbol + str(self.amount)
